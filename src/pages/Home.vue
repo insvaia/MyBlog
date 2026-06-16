@@ -1,36 +1,21 @@
 <script setup lang="ts">
 import type { Post } from '@/utils/posts'
-import { getAllPosts, getAllTags } from '@/utils/posts'
+import { getAllPosts } from '@/utils/posts'
 
 const posts = ref<Post[]>(getAllPosts())
-const tags = getAllTags()
-
-const activeTag = ref<string | null>(null)
 const searchQuery = ref('')
 
 const filteredPosts = computed(() => {
-  let result = posts.value
+  if (!searchQuery.value.trim()) return posts.value
 
-  if (activeTag.value) {
-    result = result.filter((p) => p.tags.includes(activeTag.value!))
-  }
-
-  if (searchQuery.value.trim()) {
-    const q = searchQuery.value.toLowerCase()
-    result = result.filter(
-      (p) =>
-        p.title.toLowerCase().includes(q) ||
-        p.summary.toLowerCase().includes(q) ||
-        p.tags.some((t) => t.toLowerCase().includes(q)),
-    )
-  }
-
-  return result
+  const q = searchQuery.value.toLowerCase()
+  return posts.value.filter(
+    (p) =>
+      p.title.toLowerCase().includes(q) ||
+      p.summary.toLowerCase().includes(q) ||
+      p.tags.some((t) => t.toLowerCase().includes(q)),
+  )
 })
-
-function toggleTag(tag: string) {
-  activeTag.value = activeTag.value === tag ? null : tag
-}
 
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('zh-CN', {
@@ -43,12 +28,6 @@ function formatDate(dateStr: string): string {
 
 <template>
   <div class="home">
-    <!-- Header -->
-    <header class="header">
-      <h1 class="site-title">Blog</h1>
-      <p class="site-desc">记录技术与生活</p>
-    </header>
-
     <!-- Search -->
     <div class="search-bar">
       <n-input
@@ -56,26 +35,11 @@ function formatDate(dateStr: string): string {
         placeholder="搜索文章..."
         clearable
         round
-        size="large"
       >
         <template #prefix>
           <span class="search-icon">🔍</span>
         </template>
       </n-input>
-    </div>
-
-    <!-- Tag filter -->
-    <div class="tag-bar">
-      <n-tag
-        v-for="tag in tags"
-        :key="tag"
-        :type="activeTag === tag ? 'primary' : 'default'"
-        :bordered="false"
-        class="tag-chip"
-        @click="toggleTag(tag)"
-      >
-        {{ tag }}
-      </n-tag>
     </div>
 
     <!-- Post list -->
@@ -105,7 +69,6 @@ function formatDate(dateStr: string): string {
       </article>
     </div>
 
-    <!-- Empty state -->
     <n-empty v-else description="没有找到匹配的文章" class="empty-state" />
   </div>
 </template>
@@ -114,30 +77,11 @@ function formatDate(dateStr: string): string {
 .home {
   max-width: 720px;
   margin: 0 auto;
-  padding: 80px 20px 60px;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 48px;
-}
-
-.site-title {
-  font-size: 2.2em;
-  font-weight: 700;
-  color: #1a1a1a;
-  letter-spacing: -0.5px;
-  margin: 0;
-}
-
-.site-desc {
-  margin-top: 8px;
-  color: #999;
-  font-size: 0.95em;
+  padding: 48px 40px 80px;
 }
 
 .search-bar {
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 
 .search-icon {
@@ -145,27 +89,9 @@ function formatDate(dateStr: string): string {
   opacity: 0.4;
 }
 
-.tag-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 36px;
-  justify-content: center;
-}
-
-.tag-chip {
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    transform: translateY(-1px);
-  }
-}
-
 .post-list {
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .post-card {
@@ -178,7 +104,7 @@ function formatDate(dateStr: string): string {
 
 .post-link {
   display: block;
-  padding: 24px 0;
+  padding: 22px 0;
   text-decoration: none;
   transition: padding-left 0.2s;
 
@@ -192,7 +118,7 @@ function formatDate(dateStr: string): string {
 }
 
 .post-title {
-  font-size: 1.2em;
+  font-size: 1.15em;
   font-weight: 600;
   color: #1a1a1a;
   margin: 0 0 6px;
@@ -201,7 +127,7 @@ function formatDate(dateStr: string): string {
 
 .post-summary {
   color: #888;
-  font-size: 0.92em;
+  font-size: 0.9em;
   line-height: 1.6;
   margin: 0 0 10px;
   display: -webkit-box;
@@ -228,6 +154,6 @@ function formatDate(dateStr: string): string {
 }
 
 .empty-state {
-  margin-top: 60px;
+  margin-top: 80px;
 }
 </style>

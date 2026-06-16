@@ -3,14 +3,11 @@ import { getPostBySlug, headingId } from '@/utils/posts'
 import type { Heading, Post } from '@/utils/posts'
 
 const route = useRoute()
-const router = useRouter()
 const slug = computed(() => route.params.slug as string)
-
 const post = computed<Post | undefined>(() => getPostBySlug(slug.value))
 
 const activeId = ref('')
 
-// Build TOC from headings
 const toc = computed<Heading[]>(() => {
   if (!post.value) return []
   return post.value.headings.map((h) => ({
@@ -19,7 +16,6 @@ const toc = computed<Heading[]>(() => {
   }))
 })
 
-// IntersectionObserver: highlight current TOC item
 let observer: IntersectionObserver | null = null
 
 function setupObserver() {
@@ -56,10 +52,6 @@ function scrollToHeading(id: string) {
   }
 }
 
-function goBack() {
-  router.push('/')
-}
-
 function formatDate(dateStr: string): string {
   return new Date(dateStr).toLocaleDateString('zh-CN', {
     year: 'numeric',
@@ -68,29 +60,19 @@ function formatDate(dateStr: string): string {
   })
 }
 
-onMounted(() => {
-  nextTick(setupObserver)
-})
-
+onMounted(() => nextTick(setupObserver))
 onUnmounted(cleanupObserver)
+watch(slug, () => nextTick(setupObserver))
 
-watch(slug, () => {
-  nextTick(setupObserver)
-})
-
-// Override heading IDs in rendered HTML
 function processContent(html: string, headings: Heading[]): string {
   let result = html
   for (const h of headings) {
-    // Replace heading tags without IDs with ones that have IDs
-    const tagLevel = h.level
     const escapedText = h.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    // Try to match the heading and add id
     const regex = new RegExp(
-      `(<h${tagLevel}[^>]*)>(${escapedText})</h${tagLevel}>`,
+      `(<h${h.level}[^>]*)>(${escapedText})</h${h.level}>`,
       'i',
     )
-    result = result.replace(regex, `$1 id="${h.id}">$2</h${tagLevel}>`)
+    result = result.replace(regex, `$1 id="${h.id}">$2</h${h.level}>`)
   }
   return result
 }
@@ -103,15 +85,7 @@ const renderedContent = computed(() => {
 
 <template>
   <div class="post-page">
-    <!-- Top bar -->
-    <div class="top-bar">
-      <n-button text @click="goBack" class="back-btn">
-        ← 返回
-      </n-button>
-    </div>
-
     <template v-if="post">
-      <!-- Article header -->
       <header class="post-header">
         <h1 class="post-title">{{ post.title }}</h1>
         <div class="post-meta">
@@ -129,7 +103,6 @@ const renderedContent = computed(() => {
         </div>
       </header>
 
-      <!-- TOC sidebar + Content -->
       <div class="post-body">
         <aside v-if="toc.length > 0" class="toc-sidebar">
           <nav class="toc-nav">
@@ -151,54 +124,31 @@ const renderedContent = computed(() => {
           </nav>
         </aside>
 
-        <main
-          class="post-content"
-          v-html="renderedContent"
-        />
+        <main class="post-content" v-html="renderedContent" />
       </div>
     </template>
 
-    <!-- 404 -->
-    <n-empty v-else description="文章不存在" class="not-found">
-      <template #extra>
-        <n-button @click="goBack">返回首页</n-button>
-      </template>
-    </n-empty>
+    <n-empty v-else description="文章不存在" class="not-found" />
   </div>
 </template>
 
 <style scoped lang="scss">
 .post-page {
-  min-height: 100vh;
-}
-
-.top-bar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.back-btn {
-  font-size: 14px;
-  color: #666;
+  padding-bottom: 80px;
 }
 
 .post-header {
   max-width: 720px;
   margin: 0 auto;
-  padding: 40px 20px 20px;
+  padding: 48px 40px 16px;
 }
 
 .post-title {
-  font-size: 2em;
+  font-size: 1.8em;
   font-weight: 700;
   line-height: 1.35;
   color: #1a1a1a;
-  margin: 0 0 16px;
+  margin: 0 0 14px;
 }
 
 .post-meta {
@@ -210,7 +160,7 @@ const renderedContent = computed(() => {
 
 .post-date {
   color: #bbb;
-  font-size: 0.9em;
+  font-size: 0.85em;
 }
 
 .post-tags {
@@ -222,17 +172,16 @@ const renderedContent = computed(() => {
   display: flex;
   justify-content: center;
   gap: 48px;
-  padding: 24px 20px 80px;
+  padding: 20px 40px 0;
 }
 
-// TOC sidebar
 .toc-sidebar {
   position: sticky;
-  top: 80px;
-  width: 200px;
+  top: 40px;
+  width: 180px;
   flex-shrink: 0;
   align-self: flex-start;
-  max-height: calc(100vh - 120px);
+  max-height: calc(100vh - 80px);
   overflow-y: auto;
 
   @media (max-width: 1024px) {
@@ -241,9 +190,9 @@ const renderedContent = computed(() => {
 }
 
 .toc-title {
-  font-size: 0.82em;
+  font-size: 0.78em;
   font-weight: 600;
-  color: #999;
+  color: #bbb;
   margin: 0 0 10px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -256,17 +205,16 @@ const renderedContent = computed(() => {
 }
 
 .toc-item {
-  padding: 4px 0 4px 0;
-  font-size: 0.85em;
+  padding: 4px 0 4px 12px;
+  font-size: 0.83em;
   color: #999;
   cursor: pointer;
   transition: color 0.15s;
   line-height: 1.5;
   border-left: 2px solid transparent;
-  padding-left: 12px;
 
   &.toc-level-2 { padding-left: 20px; }
-  &.toc-level-3 { padding-left: 28px; font-size: 0.8em; }
+  &.toc-level-3 { padding-left: 28px; font-size: 0.78em; }
 
   &:hover {
     color: #333;
@@ -279,10 +227,10 @@ const renderedContent = computed(() => {
   }
 }
 
-// Main content
 .post-content {
   min-width: 0;
   flex: 1;
+  max-width: 720px;
 }
 
 .not-found {

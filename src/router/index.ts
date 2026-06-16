@@ -1,16 +1,38 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import type { RouteRecordRaw } from 'vue-router'
+import MainLayout from '@/layouts/MainLayout.vue'
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    name: 'Home',
-    component: () => import('@/pages/Home.vue'),
-  },
-  {
-    path: '/post/:slug',
-    name: 'Post',
-    component: () => import('@/pages/Post.vue'),
+    component: MainLayout,
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('@/pages/Home.vue'),
+      },
+      {
+        path: 'post/:slug',
+        name: 'Post',
+        component: () => import('@/pages/Post.vue'),
+      },
+      {
+        path: 'tags',
+        name: 'Tags',
+        component: () => import('@/pages/Tags.vue'),
+      },
+      {
+        path: 'tag/:tag',
+        name: 'Tag',
+        component: () => import('@/pages/TagPosts.vue'),
+      },
+      {
+        path: 'about',
+        name: 'About',
+        component: () => import('@/pages/About.vue'),
+      },
+    ],
   },
 ]
 
