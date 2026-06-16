@@ -70,26 +70,37 @@ watch(slug, () => nextTick(setupObserver))
 <template>
   <div class="post-page">
     <template v-if="post">
-      <!-- Article header -->
-      <header class="post-header">
-        <h1 class="post-title">{{ post.title }}</h1>
-        <div class="post-meta">
-          <span class="post-date">{{ formatDate(post.date) }}</span>
-          <span class="post-tags">
-            <n-tag
-              v-for="tag in post.tags"
-              :key="tag"
-              size="small"
-              :bordered="false"
-            >
-              {{ tag }}
-            </n-tag>
-          </span>
-        </div>
-      </header>
-
       <!-- TOC + Content -->
       <div class="post-body">
+        <!-- Content area -->
+        <div class="content-area">
+          <header class="post-header">
+            <h1 class="post-title">{{ post.title }}</h1>
+            <div class="post-meta">
+              <span class="post-date">{{ formatDate(post.date) }}</span>
+              <span class="post-tags">
+                <n-tag
+                  v-for="tag in post.tags"
+                  :key="tag"
+                  size="small"
+                  :bordered="false"
+                >
+                  {{ tag }}
+                </n-tag>
+              </span>
+            </div>
+          </header>
+
+          <main class="content-wrapper">
+            <MarkdownRender
+              :key="slug"
+              ref="mdRef"
+              :content="post.content"
+            />
+          </main>
+        </div>
+
+        <!-- TOC (right side) -->
         <aside v-if="toc.length > 0" class="toc-sidebar">
           <nav class="toc-nav">
             <h4 class="toc-title">目录</h4>
@@ -109,14 +120,6 @@ watch(slug, () => nextTick(setupObserver))
             </ul>
           </nav>
         </aside>
-
-        <main class="content-wrapper">
-          <MarkdownRender
-            :key="slug"
-            ref="mdRef"
-            :content="post.content"
-          />
-        </main>
       </div>
     </template>
 
@@ -130,10 +133,22 @@ watch(slug, () => nextTick(setupObserver))
   padding-bottom: 80px;
 }
 
+.post-body {
+  display: flex;
+  justify-content: center;
+  gap: 56px;
+  padding: 48px 40px 0;
+}
+
+// Content area (centered)
+.content-area {
+  min-width: 0;
+  flex: 1;
+  max-width: 860px;
+}
+
 .post-header {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 48px 40px 16px;
+  margin: 0 0 24px;
 }
 
 .post-title {
@@ -161,18 +176,16 @@ watch(slug, () => nextTick(setupObserver))
   gap: 6px;
 }
 
-.post-body {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  padding: 20px 40px 0;
+// Content wrapper
+.content-wrapper {
+  min-width: 0;
 }
 
-// TOC sidebar
+// TOC sidebar (right side)
 .toc-sidebar {
   position: sticky;
   top: 40px;
-  width: 180px;
+  width: 220px;
   flex-shrink: 0;
   align-self: flex-start;
   max-height: calc(100vh - 80px);
@@ -184,10 +197,10 @@ watch(slug, () => nextTick(setupObserver))
 }
 
 .toc-title {
-  font-size: 0.78em;
+  font-size: 0.88em;
   font-weight: 600;
   color: #bbb;
-  margin: 0 0 10px;
+  margin: 0 0 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -199,16 +212,16 @@ watch(slug, () => nextTick(setupObserver))
 }
 
 .toc-item {
-  padding: 4px 0 4px 12px;
-  font-size: 0.83em;
+  padding: 5px 0 5px 14px;
+  font-size: 0.9em;
   color: #999;
   cursor: pointer;
   transition: color 0.15s;
   line-height: 1.5;
   border-left: 2px solid transparent;
 
-  &.toc-level-2 { padding-left: 20px; }
-  &.toc-level-3 { padding-left: 28px; font-size: 0.78em; }
+  &.toc-level-2 { padding-left: 22px; }
+  &.toc-level-3 { padding-left: 30px; font-size: 0.85em; }
 
   &:hover {
     color: #333;
@@ -219,13 +232,6 @@ watch(slug, () => nextTick(setupObserver))
     font-weight: 500;
     border-left-color: #999;
   }
-}
-
-// Content wrapper
-.content-wrapper {
-  min-width: 0;
-  flex: 1;
-  max-width: 720px;
 }
 
 .not-found {

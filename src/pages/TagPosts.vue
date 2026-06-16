@@ -38,7 +38,7 @@ function formatDate(dateStr: string): string {
 
 <style scoped lang="scss">
 .tag-posts {
-  max-width: 720px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 48px 40px 80px;
 }

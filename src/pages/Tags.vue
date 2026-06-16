@@ -39,7 +39,7 @@ function goTag(tag: string) {
 
 <style scoped lang="scss">
 .tags-page {
-  max-width: 720px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 48px 40px 80px;
 }
