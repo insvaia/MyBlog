@@ -1,124 +1,193 @@
-// Markdown article typography
+// ── Markdown article typography ──
 .post-content {
   max-width: 720px;
   margin: 0 auto;
-  line-height: 1.85;
-  color: #333;
-  font-size: 15px;
+  font-size: 16px;
+  line-height: 1.8;
+  color: #2c2c2c;
   word-break: break-word;
 
+  // ── Headings ──
   h1, h2, h3, h4, h5, h6 {
-    margin: 2em 0 0.6em;
-    font-weight: 600;
-    line-height: 1.35;
-    color: #1a1a1a;
+    margin: 2.2em 0 0.8em;
+    font-weight: 700;
+    line-height: 1.3;
+    color: #111;
+    letter-spacing: -0.3px;
 
     &:first-child {
       margin-top: 0;
     }
   }
 
-  h1 { font-size: 1.8em; }
+  h1 {
+    font-size: 2em;
+    margin-bottom: 0.5em;
+  }
+
   h2 {
-    font-size: 1.45em;
-    padding-bottom: 0.3em;
-    border-bottom: 1px solid #e8e8e8;
+    font-size: 1.5em;
+    margin-top: 2.5em;
+    padding-bottom: 0.35em;
+    border-bottom: 2px solid #eee;
   }
-  h3 { font-size: 1.2em; }
 
+  h3 {
+    font-size: 1.2em;
+    color: #222;
+  }
+
+  h4 { font-size: 1.05em; color: #333; }
+
+  // ── Paragraph ──
   p {
-    margin: 0 0 1em;
+    margin: 0 0 1.2em;
   }
 
+  // ── Lists ──
   ul, ol {
-    margin: 0 0 1em;
-    padding-left: 1.5em;
+    margin: 0 0 1.2em;
+    padding-left: 1.6em;
   }
 
   li {
-    margin-bottom: 0.3em;
-  }
+    margin-bottom: 0.4em;
 
-  blockquote {
-    margin: 0 0 1em;
-    padding: 8px 16px;
-    border-left: 4px solid #ddd;
-    color: #666;
-    background: #f9f9f9;
-    border-radius: 0 4px 4px 0;
-  }
-
-  a {
-    color: #666;
-    text-decoration: underline;
-    text-underline-offset: 2px;
-
-    &:hover {
-      color: #333;
+    > ul, > ol {
+      margin-top: 0.4em;
+      margin-bottom: 0;
     }
   }
 
+  // ── Blockquote ──
+  blockquote {
+    margin: 1.5em 0;
+    padding: 16px 20px;
+    border-left: 4px solid #999;
+    border-radius: 0 6px 6px 0;
+    background: #f8f8f8;
+    color: #555;
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  // ── Links ──
+  a {
+    color: #175199;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(23, 81, 153, 0.25);
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+      color: #0d3b6e;
+      border-bottom-color: #0d3b6e;
+    }
+  }
+
+  // ── Bold & Italic ──
   strong {
-    font-weight: 600;
+    font-weight: 650;
+    color: #1a1a1a;
   }
 
+  em {
+    font-style: italic;
+    color: #444;
+  }
+
+  // ── Horizontal Rule ──
   hr {
-    margin: 2em 0;
+    margin: 2.5em 0;
     border: none;
-    border-top: 1px solid #eee;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #ddd 20%, #ddd 80%, transparent);
   }
 
-  // Code
+  // ── Inline Code ──
   code {
-    font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
-    font-size: 0.9em;
+    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 0.88em;
   }
 
   :not(pre) > code {
-    padding: 2px 6px;
-    background: #f5f5f5;
-    border-radius: 3px;
-    color: #d63384;
+    padding: 2px 7px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    color: #c7254e;
+    font-size: 0.85em;
   }
 
+  // ── Code Block ──
   pre {
-    margin: 0 0 1.2em;
-    padding: 16px 20px;
+    margin: 1.5em 0;
+    padding: 20px 24px;
     background: #1e1e1e;
-    border-radius: 6px;
+    border-radius: 8px;
     overflow-x: auto;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 
     code {
       background: none;
       color: #d4d4d4;
       padding: 0;
-      font-size: 0.88em;
-      line-height: 1.6;
+      font-size: 0.85em;
+      line-height: 1.7;
     }
   }
 
-  // Table
+  // ── Tables ──
   table {
     width: 100%;
-    margin: 0 0 1em;
-    border-collapse: collapse;
+    margin: 1.5em 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid #e8e8e8;
+    border-radius: 6px;
+    overflow: hidden;
   }
 
-  th, td {
-    padding: 8px 12px;
-    border: 1px solid #e0e0e0;
-    text-align: left;
+  thead {
+    background: #f6f6f6;
   }
 
   th {
-    background: #f9f9f9;
     font-weight: 600;
+    color: #111;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
   }
 
-  // Image
+  th, td {
+    padding: 10px 16px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #fafafa;
+  }
+
+  tbody tr:hover {
+    background: #f3f3f3;
+  }
+
+  // ── Images ──
   img {
     max-width: 100%;
-    border-radius: 4px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  }
+
+  // ── Task list ──
+  input[type='checkbox'] {
+    margin-right: 6px;
+    accent-color: #666;
   }
 }
-

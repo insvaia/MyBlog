@@ -1,41 +1,43 @@
 <script setup lang="ts">
-import { getPostBySlug, headingId } from '@/utils/posts'
-import type { Heading, Post } from '@/utils/posts'
+import { getPostBySlug } from '@/utils/posts'
+import type { Post } from '@/utils/posts'
+import MarkdownRender from '@/components/MarkdownRender.vue'
+import type { TocHeading } from '@/utils/headings'
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
 const post = computed<Post | undefined>(() => getPostBySlug(slug.value))
 
+const mdRef = ref<InstanceType<typeof MarkdownRender> | null>(null)
 const activeId = ref('')
 
-const toc = computed<Heading[]>(() => {
-  if (!post.value) return []
-  return post.value.headings.map((h) => ({
-    ...h,
-    id: headingId(h.text),
-  }))
+const toc = computed<TocHeading[]>(() => {
+  return mdRef.value?.headings ?? []
 })
 
+// ── TOC observer ──
 let observer: IntersectionObserver | null = null
 
 function setupObserver() {
   cleanupObserver()
-  const headingEls = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3')
-  if (headingEls.length === 0) return
+  nextTick(() => {
+    const headingEls = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3')
+    if (headingEls.length === 0) return
 
-  observer = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          activeId.value = entry.target.id
-          break
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            activeId.value = entry.target.id
+            break
+          }
         }
-      }
-    },
-    { rootMargin: '-80px 0px -60% 0px' },
-  )
+      },
+      { rootMargin: '-80px 0px -60% 0px' },
+    )
 
-  headingEls.forEach((el) => observer!.observe(el))
+    headingEls.forEach((el) => observer!.observe(el))
+  })
 }
 
 function cleanupObserver() {
@@ -63,29 +65,12 @@ function formatDate(dateStr: string): string {
 onMounted(() => nextTick(setupObserver))
 onUnmounted(cleanupObserver)
 watch(slug, () => nextTick(setupObserver))
-
-function processContent(html: string, headings: Heading[]): string {
-  let result = html
-  for (const h of headings) {
-    const escapedText = h.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-    const regex = new RegExp(
-      `(<h${h.level}[^>]*)>(${escapedText})</h${h.level}>`,
-      'i',
-    )
-    result = result.replace(regex, `$1 id="${h.id}">$2</h${h.level}>`)
-  }
-  return result
-}
-
-const renderedContent = computed(() => {
-  if (!post.value) return ''
-  return processContent(post.value.content, toc.value)
-})
 </script>
 
 <template>
   <div class="post-page">
     <template v-if="post">
+      <!-- Article header -->
       <header class="post-header">
         <h1 class="post-title">{{ post.title }}</h1>
         <div class="post-meta">
@@ -103,6 +88,7 @@ const renderedContent = computed(() => {
         </div>
       </header>
 
+      <!-- TOC + Content -->
       <div class="post-body">
         <aside v-if="toc.length > 0" class="toc-sidebar">
           <nav class="toc-nav">
@@ -124,10 +110,17 @@ const renderedContent = computed(() => {
           </nav>
         </aside>
 
-        <main class="post-content" v-html="renderedContent" />
+        <main class="content-wrapper">
+          <MarkdownRender
+            :key="slug"
+            ref="mdRef"
+            :content="post.content"
+          />
+        </main>
       </div>
     </template>
 
+    <!-- 404 -->
     <n-empty v-else description="文章不存在" class="not-found" />
   </div>
 </template>
@@ -175,6 +168,7 @@ const renderedContent = computed(() => {
   padding: 20px 40px 0;
 }
 
+// TOC sidebar
 .toc-sidebar {
   position: sticky;
   top: 40px;
@@ -227,7 +221,8 @@ const renderedContent = computed(() => {
   }
 }
 
-.post-content {
+// Content wrapper
+.content-wrapper {
   min-width: 0;
   flex: 1;
   max-width: 720px;
