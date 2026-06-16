@@ -10,6 +10,9 @@
 </template>
 
 <style lang="scss">
+// highlight.js github theme
+@use 'highlight.js/styles/github.css';
+
 * {
   margin: 0;
   padding: 0;
