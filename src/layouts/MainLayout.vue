@@ -99,6 +99,23 @@ function handleMenuClick(key: string) {
 <style scoped lang="scss">
 .app-layout {
   height: 100vh;
+  background-color: #FAFAFC;
+  background-image: radial-gradient(circle at 10% 20%, rgba(53, 117, 255, 0.15) 0%, rgba(207, 107, 251, 0.10) 30%, transparent 70%);
+}
+
+// Punch through Naive UI's internal opaque layers in content area
+.content {
+  :deep(*) {
+    background-color: transparent;
+  }
+  // But restore code block backgrounds
+  :deep(pre),
+  :deep(pre code) {
+    background-color: #0d1117;
+  }
+  :deep(:not(pre) > code) {
+    background-color: #f0f0f0;
+  }
 }
 
 .sidebar {

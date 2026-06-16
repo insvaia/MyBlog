@@ -21,12 +21,28 @@
   box-sizing: border-box;
 }
 
+html {
+  background-color: #FAFAFC;
+  background-image: radial-gradient(circle at 10% 20%, rgba(53, 117, 255, 0.15) 0%, rgba(207, 107, 251, 0.10) 30%, transparent 70%);
+}
+
+#app {
+  background: transparent;
+}
+
+// Naive UI provider wrappers must be transparent
+.n-config-provider,
+.n-dialog-provider,
+.n-message-provider {
+  background: transparent;
+}
+
 body {
   font-family:
     'Segoe UI', 'Microsoft YaHei', 'PingFang SC',
     'Hiragino Sans GB', sans-serif;
   color: #333;
-  background: linear-gradient(180deg, #fff 0%, #fffef9 40%, #fffdf0 100%);
+  background: transparent;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
