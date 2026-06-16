@@ -1,4 +1,4 @@
-import fm from 'front-matter'
+import { parseFrontMatter } from '@/utils/frontmatter'
 
 export interface PostMeta {
   title: string
@@ -28,7 +28,7 @@ export function getAllPosts(): Post[] {
     .map(([filepath, raw]) => {
       const filename = filepath.split('/').pop() ?? ''
       const slug = filename.replace(/\.md$/, '')
-      const { attributes, body } = fm<{
+      const { attributes, body } = parseFrontMatter<{
         title: string
         date: string
         tags: string[]

@@ -1,10 +1,33 @@
 <script setup lang="ts">
+import { useGuestbookStore } from '@/stores/guestbook'
+
 const message = useMessage()
+const dialog = useDialog()
+const store = useGuestbookStore()
+
+const { messages } = storeToRefs(store)
 
 const nickname = ref('')
 const content = ref('')
 const submitting = ref(false)
-const messages = ref<{ nickname: string; content: string; time: string }[]>([])
+
+// Generate a consistent color from a string
+function avatarColor(name: string): string {
+  const colors = [
+    '#f7a8b8', '#f9c87a', '#8ecae6', '#90be6d',
+    '#c77dff', '#ff9f1c', '#48bfe3', '#e07a5f',
+  ]
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  }
+  return colors[Math.abs(hash) % colors.length]!
+}
+
+function initials(name: string): string {
+  // Take first character (supports Chinese)
+  return name.trim().slice(0, 1) || '?'
+}
 
 function submit() {
   if (!nickname.value.trim() || !content.value.trim()) {
@@ -12,9 +35,8 @@ function submit() {
     return
   }
   submitting.value = true
-  // Simulate submission
   setTimeout(() => {
-    messages.value.unshift({
+    store.addMessage({
       nickname: nickname.value.trim(),
       content: content.value.trim(),
       time: new Date().toLocaleString('zh-CN'),
@@ -22,104 +44,268 @@ function submit() {
     nickname.value = ''
     content.value = ''
     submitting.value = false
-    message.success('留言成功')
+    message.success('留言成功 ✨')
   }, 500)
+}
+
+function deleteMessage(index: number) {
+  dialog.warning({
+    title: '删除留言',
+    content: '确定要删除这条留言吗？删除后无法恢复。',
+    positiveText: '确认删除',
+    negativeText: '取消',
+    onPositiveClick: () => {
+      store.removeMessage(index)
+      message.success('已删除')
+    },
+  })
 }
 </script>
 
 <template>
   <div class="guestbook-page">
     <h2 class="page-title">留言</h2>
+    <p class="page-subtitle">留下你的足迹，说点什么吧～</p>
 
-    <!-- Form -->
+    <!-- Form card -->
     <div class="form-card">
-      <n-input
-        v-model:value="nickname"
-        placeholder="你的昵称"
-        maxlength="20"
-        class="form-input"
-      />
-      <n-input
-        v-model:value="content"
-        type="textarea"
-        placeholder="说点什么..."
-        maxlength="200"
-        show-count
-        :rows="3"
-        class="form-input"
-      />
-      <n-button
-        type="primary"
-        :loading="submitting"
-        @click="submit"
-        block
-      >
-        提交留言
-      </n-button>
+      <div class="form-header">
+        <span class="form-icon">💬</span>
+        <span>写下你的留言</span>
+      </div>
+
+      <div class="form-body">
+        <div class="form-row">
+          <div class="avatar-preview" :style="{ background: avatarColor(nickname || '?') }">
+            {{ initials(nickname || '?') }}
+          </div>
+          <n-input
+            v-model:value="nickname"
+            placeholder="你的昵称"
+            maxlength="20"
+            size="large"
+            round
+            class="form-nickname"
+          />
+        </div>
+
+        <n-input
+          v-model:value="content"
+          type="textarea"
+          placeholder="写下你想说的话..."
+          maxlength="300"
+          show-count
+          :rows="4"
+          size="large"
+          round
+          class="form-textarea"
+        />
+
+        <n-button
+          type="primary"
+          :loading="submitting"
+          @click="submit"
+          size="large"
+          block
+          round
+          class="submit-btn"
+        >
+          <template #default>
+            <span v-if="!submitting">📨 提交留言</span>
+          </template>
+        </n-button>
+      </div>
+    </div>
+
+    <!-- Message count & divider -->
+    <div v-if="messages.length > 0" class="section-header">
+      <span class="section-count">{{ messages.length }} 条留言</span>
+      <div class="section-line" />
     </div>
 
     <!-- Messages -->
     <div v-if="messages.length > 0" class="message-list">
       <div v-for="(msg, i) in messages" :key="i" class="message-card">
-        <div class="msg-header">
-          <span class="msg-nickname">{{ msg.nickname }}</span>
-          <span class="msg-time">{{ msg.time }}</span>
+        <div class="msg-avatar" :style="{ background: avatarColor(msg.nickname) }">
+          {{ initials(msg.nickname) }}
         </div>
-        <p class="msg-content">{{ msg.content }}</p>
+        <div class="msg-body">
+          <div class="msg-header">
+            <span class="msg-nickname">{{ msg.nickname }}</span>
+            <span class="msg-time">{{ msg.time }}</span>
+            <span v-if="i === 0" class="msg-badge">最新</span>
+            <button class="msg-delete" title="删除" @click="deleteMessage(i)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+            </button>
+          </div>
+          <p class="msg-content">{{ msg.content }}</p>
+        </div>
       </div>
     </div>
 
-    <n-empty v-else description="暂无留言，来说两句吧" class="empty-state" />
+    <!-- Empty state -->
+    <div v-else class="empty-state">
+      <div class="empty-icon">📝</div>
+      <p class="empty-text">还没有留言，来做第一个留言的人吧！</p>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .guestbook-page {
-  max-width: 600px;
+  max-width: 640px;
   margin: 0 auto;
   padding: 48px 40px 80px;
 }
 
 .page-title {
-  font-size: 1.4em;
-  font-weight: 600;
+  font-size: 1.5em;
+  font-weight: 700;
   color: #1a1a1a;
-  margin: 0 0 24px;
+  margin: 0 0 4px;
 }
 
+.page-subtitle {
+  font-size: 0.9em;
+  color: #bbb;
+  margin: 0 0 28px;
+}
+
+// ── Form card ──
 .form-card {
-  padding: 20px;
   border: 1px solid #eee;
-  border-radius: 8px;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
   background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 0.9em;
+  font-weight: 500;
+  color: #555;
 }
 
-.form-input {
-  margin-bottom: 12px;
+.form-icon {
+  font-size: 1.1em;
 }
 
+.form-body {
+  padding: 24px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.avatar-preview {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95em;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+
+.form-nickname {
+  flex: 1;
+}
+
+.form-textarea {
+  margin-bottom: 16px;
+}
+
+.submit-btn {
+  --n-color: #1a1a1a !important;
+  --n-color-hover: #333 !important;
+  --n-color-pressed: #000 !important;
+  --n-text-color: #fff !important;
+  height: 46px;
+  font-size: 0.95em;
+  font-weight: 500;
+  border-radius: 23px;
+}
+
+// ── Section header ──
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 36px 0 16px;
+}
+
+.section-count {
+  font-size: 0.85em;
+  color: #bbb;
+  white-space: nowrap;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: #f0f0f0;
+}
+
+// ── Message list ──
 .message-list {
-  margin-top: 32px;
   display: flex;
   flex-direction: column;
-  gap: 0;
 }
 
 .message-card {
-  padding: 16px 0;
-  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  gap: 14px;
+  padding: 20px 0;
+  border-bottom: 1px solid #f5f5f5;
+
+  &:first-child {
+    padding-top: 0;
+  }
+}
+
+.msg-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9em;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.msg-body {
+  flex: 1;
+  min-width: 0;
 }
 
 .msg-header {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   margin-bottom: 6px;
 }
 
 .msg-nickname {
-  font-size: 0.9em;
-  font-weight: 500;
+  font-size: 0.92em;
+  font-weight: 600;
   color: #333;
 }
 
@@ -128,14 +314,56 @@ function submit() {
   color: #ccc;
 }
 
-.msg-content {
-  font-size: 0.92em;
-  line-height: 1.7;
-  color: #555;
-  margin: 0;
+.msg-badge {
+  font-size: 0.65em;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #f0f7ff;
+  color: #5b9bd5;
+  font-weight: 500;
 }
 
+.msg-delete {
+  margin-left: auto;
+  border: none;
+  background: none;
+  color: #ccc;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  line-height: 0;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover {
+    color: #e05a5a;
+    background: #fef0f0;
+  }
+}
+
+.msg-content {
+  font-size: 0.93em;
+  line-height: 1.75;
+  color: #555;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+// ── Empty state ──
 .empty-state {
-  margin-top: 60px;
+  margin-top: 80px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 3em;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.empty-text {
+  font-size: 0.95em;
+  color: #ccc;
+  margin: 0;
 }
 </style>
