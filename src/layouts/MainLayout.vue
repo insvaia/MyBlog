@@ -57,12 +57,13 @@ function handleMenuClick(key: string) {
       bordered
       collapse-mode="transform"
       :collapsed-width="0"
-      :width="240"
+      :width="260"
       class="sidebar"
     >
       <div class="sidebar-header">
         <n-avatar
-          :size="64"
+          :size="96"
+          round
           src="/imgs/shantian.jpg"
           fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ccc' d='M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .66.54 1.2 1.2 1.2h16.8c.66 0 1.2-.54 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z'/%3E%3C/svg%3E"
           class="avatar"
@@ -104,7 +105,7 @@ function handleMenuClick(key: string) {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background: #fafafa;
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .sidebar-header {
@@ -153,7 +154,7 @@ function handleMenuClick(key: string) {
 .content {
   height: 100vh;
   overflow-y: auto;
-  background: #fff;
+  background: transparent;
 }
 </style>
 

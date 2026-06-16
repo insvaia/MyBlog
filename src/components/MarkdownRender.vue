@@ -114,6 +114,7 @@ defineExpose({ headings })
       <!-- ── Code Block ── -->
       <pre v-else-if="token.type === 'code'">
         <code
+          class="hljs"
           :class="token.lang ? `language-${token.lang}` : ''"
           v-html="highlightCode(token.text, token.lang)"
         />
