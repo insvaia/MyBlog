@@ -139,6 +139,7 @@ function handleMenuClick(key: string) {
 .blog-name {
   font-size: 1.15em;
   font-weight: 600;
+  letter-spacing: -0.02em;
   color: #1a1a1a;
   text-decoration: none;
 

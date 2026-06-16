@@ -46,6 +46,7 @@ function formatDate(dateStr: string): string {
 .page-title {
   font-size: 1.4em;
   font-weight: 600;
+  letter-spacing: -0.02em;
   color: #1a1a1a;
   margin: 0 0 24px;
 }

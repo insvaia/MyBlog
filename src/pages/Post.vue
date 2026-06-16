@@ -153,7 +153,8 @@ watch(slug, () => nextTick(setupObserver))
 
 .post-title {
   font-size: 1.8em;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   line-height: 1.35;
   color: #1a1a1a;
   margin: 0 0 14px;

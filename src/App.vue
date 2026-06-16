@@ -38,10 +38,10 @@ html {
 }
 
 body {
-  font-family:
-    'Segoe UI', 'Microsoft YaHei', 'PingFang SC',
-    'Hiragino Sans GB', sans-serif;
-  color: #333;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-weight: 400;
+  line-height: 1.7;
+  color: #1e1e1e;
   background: transparent;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;

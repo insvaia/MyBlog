@@ -119,6 +119,7 @@ function formatDate(dateStr: string): string {
 .post-title {
   font-size: 1.15em;
   font-weight: 600;
+  letter-spacing: -0.02em;
   color: #1a1a1a;
   margin: 0 0 6px;
   transition: color 0.2s;

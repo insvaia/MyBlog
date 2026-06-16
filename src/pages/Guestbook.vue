@@ -160,7 +160,8 @@ function deleteMessage(index: number) {
 
 .page-title {
   font-size: 1.5em;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: #1a1a1a;
   margin: 0 0 4px;
 }
