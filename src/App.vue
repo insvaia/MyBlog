@@ -21,8 +21,8 @@
 
 body {
   font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    'Segoe UI', 'Microsoft YaHei', 'PingFang SC',
+    'Hiragino Sans GB', sans-serif;
   color: #333;
   background: #fff;
   -webkit-font-smoothing: antialiased;
