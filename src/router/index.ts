@@ -18,6 +18,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('@/pages/Post.vue'),
       },
       {
+        path: 'archives',
+        name: 'Archives',
+        component: () => import('@/pages/Archives.vue'),
+      },
+      {
         path: 'tags',
         name: 'Tags',
         component: () => import('@/pages/Tags.vue'),
@@ -26,6 +31,16 @@ const routes: RouteRecordRaw[] = [
         path: 'tag/:tag',
         name: 'Tag',
         component: () => import('@/pages/TagPosts.vue'),
+      },
+      {
+        path: 'links',
+        name: 'Links',
+        component: () => import('@/pages/Links.vue'),
+      },
+      {
+        path: 'guestbook',
+        name: 'Guestbook',
+        component: () => import('@/pages/Guestbook.vue'),
       },
       {
         path: 'about',

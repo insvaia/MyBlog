@@ -9,30 +9,40 @@ const tags = getAllTags()
 
 const menuOptions: MenuOption[] = [
   { label: '首页', key: 'home' },
+  { label: '归档', key: 'archives' },
   {
     label: '标签',
     key: 'tags',
     children: tags.map((tag) => ({ label: tag, key: `tag-${tag}` })),
   },
+  { label: '友链', key: 'links' },
+  { label: '留言', key: 'guestbook' },
   { label: '关于', key: 'about' },
 ]
 
 const activeKey = computed(() => {
   if (route.path === '/') return 'home'
+  if (route.path === '/archives') return 'archives'
+  if (route.path === '/links') return 'links'
+  if (route.path === '/guestbook') return 'guestbook'
   if (route.path === '/about') return 'about'
   if (route.path === '/tags') return 'tags'
   if (route.path.startsWith('/tag/')) return `tag-${route.params.tag}`
-  // For post detail, try to find a matching tag or default to home
   return null
 })
 
+const menuRouteMap: Record<string, string> = {
+  home: '/',
+  archives: '/archives',
+  tags: '/tags',
+  links: '/links',
+  guestbook: '/guestbook',
+  about: '/about',
+}
+
 function handleMenuClick(key: string) {
-  if (key === 'home') {
-    router.push('/')
-  } else if (key === 'tags') {
-    router.push('/tags')
-  } else if (key === 'about') {
-    router.push('/about')
+  if (menuRouteMap[key]) {
+    router.push(menuRouteMap[key])
   } else if (key.startsWith('tag-')) {
     const tag = key.replace('tag-', '')
     router.push(`/tag/${tag}`)
@@ -51,7 +61,13 @@ function handleMenuClick(key: string) {
       class="sidebar"
     >
       <div class="sidebar-header">
-        <router-link to="/" class="blog-name">Blog</router-link>
+        <n-avatar
+          :size="64"
+          src="/avatar.png"
+          fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ccc' d='M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .66.54 1.2 1.2 1.2h16.8c.66 0 1.2-.54 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z'/%3E%3C/svg%3E"
+          class="avatar"
+        />
+        <router-link to="/" class="blog-name">用户名</router-link>
         <p class="blog-desc">记录技术与生活</p>
       </div>
 
@@ -88,13 +104,19 @@ function handleMenuClick(key: string) {
 }
 
 .sidebar-header {
-  padding: 28px 20px 20px;
+  padding: 36px 20px 20px;
+  text-align: center;
   border-bottom: 1px solid #eee;
 }
 
+.avatar {
+  display: block;
+  margin: 0 auto 12px;
+}
+
 .blog-name {
-  font-size: 1.3em;
-  font-weight: 700;
+  font-size: 1.15em;
+  font-weight: 600;
   color: #1a1a1a;
   text-decoration: none;
 
