@@ -86,7 +86,11 @@ function handleMenuClick(key: string) {
 
     <!-- Right content -->
     <n-layout-content class="content">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="page" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </n-layout-content>
   </n-layout>
 </template>
@@ -150,5 +154,23 @@ function handleMenuClick(key: string) {
   height: 100vh;
   overflow-y: auto;
   background: #fff;
+}
+</style>
+
+<style lang="scss">
+// Page transition
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
 }
 </style>
