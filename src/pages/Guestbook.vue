@@ -153,7 +153,7 @@ function deleteMessage(index: number) {
 
 <style scoped lang="scss">
 .guestbook-page {
-  max-width: 640px;
+  max-width: 860px;
   margin: 0 auto;
   padding: 48px 40px 80px;
 }

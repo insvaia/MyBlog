@@ -55,14 +55,13 @@ function formatDate(dateStr: string): string {
           <div class="post-meta">
             <span class="post-date">{{ formatDate(post.date) }}</span>
             <span class="post-tags">
-              <n-tag
+              <span
                 v-for="tag in post.tags"
                 :key="tag"
-                size="small"
-                :bordered="false"
+                class="tag-chip"
               >
                 {{ tag }}
-              </n-tag>
+              </span>
             </span>
           </div>
         </router-link>
@@ -151,6 +150,24 @@ function formatDate(dateStr: string): string {
 .post-tags {
   display: flex;
   gap: 6px;
+}
+
+.tag-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  font-size: 0.75em;
+  color: #777;
+  background: rgba(128, 128, 128, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(128, 128, 128, 0.12);
+  border-radius: 10px;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover {
+    background: rgba(128, 128, 128, 0.15);
+    border-color: rgba(128, 128, 128, 0.22);
+  }
 }
 
 .empty-state {
