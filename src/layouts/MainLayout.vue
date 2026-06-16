@@ -1,9 +1,41 @@
 <script setup lang="ts">
 import type { MenuOption } from 'naive-ui'
 import { getAllTags } from '@/utils/posts'
+import { useAvatarStore } from '@/stores/avatar'
 
 const router = useRouter()
 const route = useRoute()
+const avatarStore = useAvatarStore()
+const { avatarSrc } = storeToRefs(avatarStore)
+
+const showAvatarModal = ref(false)
+const fileInputRef = ref<HTMLInputElement | null>(null)
+
+function openAvatarPreview() {
+  showAvatarModal.value = true
+}
+
+function triggerFileSelect() {
+  fileInputRef.value?.click()
+}
+
+function handleFileChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+
+  const reader = new FileReader()
+  reader.onload = () => {
+    avatarStore.setAvatar(reader.result as string)
+  }
+  reader.readAsDataURL(file)
+  // Reset so the same file can be selected again
+  input.value = ''
+}
+
+onMounted(() => {
+  avatarStore.loadAvatar()
+})
 
 const tags = getAllTags()
 
@@ -61,13 +93,15 @@ function handleMenuClick(key: string) {
       class="sidebar"
     >
       <div class="sidebar-header">
-        <n-avatar
-          :size="96"
-          round
-          src="/imgs/shantian.jpg"
-          fallback-src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ccc' d='M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v1.2c0 .66.54 1.2 1.2 1.2h16.8c.66 0 1.2-.54 1.2-1.2v-1.2c0-3.2-6.4-4.8-9.6-4.8z'/%3E%3C/svg%3E"
-          class="avatar"
-        />
+        <div class="avatar-container" @click="openAvatarPreview">
+          <div class="avatar-wrap">
+            <img
+              class="avatar"
+              :src="avatarSrc"
+              alt="avatar"
+            />
+          </div>
+        </div>
         <router-link to="/" class="blog-name">一只做梦的鱼</router-link>
         <p class="blog-desc">记录技术与生活</p>
       </div>
@@ -94,6 +128,37 @@ function handleMenuClick(key: string) {
       </router-view>
     </n-layout-content>
   </n-layout>
+
+  <!-- Avatar preview modal -->
+  <n-modal
+    v-model:show="showAvatarModal"
+    :mask-closable="true"
+    transform-origin="center"
+  >
+    <div class="avatar-modal">
+      <div class="avatar-preview-large">
+        <img :src="avatarSrc" alt="avatar preview" />
+      </div>
+      <n-button
+        type="primary"
+        round
+        size="large"
+        class="change-avatar-btn"
+        @click="triggerFileSelect"
+      >
+        📷 更换头像
+      </n-button>
+    </div>
+  </n-modal>
+
+  <!-- Hidden file input -->
+  <input
+    ref="fileInputRef"
+    type="file"
+    accept="image/*"
+    style="display: none"
+    @change="handleFileChange"
+  />
 </template>
 
 <style scoped lang="scss">
@@ -131,9 +196,53 @@ function handleMenuClick(key: string) {
   border-bottom: 1px solid #eee;
 }
 
+// ── Avatar with glow ring ──
+.avatar-container {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 16px;
+  cursor: pointer;
+
+  // Glow halo behind avatar
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(144, 238, 200, 0.22) 0%, transparent 70%);
+    z-index: 0;
+  }
+}
+
+.avatar-wrap {
+  position: relative;
+  z-index: 1;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
 .avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  margin: 0 auto 12px;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  }
 }
 
 .blog-name {
@@ -173,6 +282,39 @@ function handleMenuClick(key: string) {
   height: 100vh;
   overflow-y: auto;
   background: transparent;
+}
+
+// ── Avatar modal ──
+.avatar-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+}
+
+.avatar-preview-large {
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 12px 36px rgba(0, 0, 0, 0.1),
+    0 0 0 2px rgba(255, 255, 255, 0.5) inset;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.change-avatar-btn {
+  --n-color: #1a1a1a !important;
+  --n-color-hover: #333 !important;
+  --n-text-color: #f5f5f5 !important;
+  font-weight: 600;
 }
 </style>
 

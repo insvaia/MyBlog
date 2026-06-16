@@ -234,10 +234,11 @@ function deleteMessage(index: number) {
   --n-color: #1a1a1a !important;
   --n-color-hover: #333 !important;
   --n-color-pressed: #000 !important;
-  --n-text-color: #fff !important;
+  --n-text-color: #f5f5f5 !important;
   height: 46px;
   font-size: 0.95em;
-  font-weight: 500;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   border-radius: 23px;
 }
 
