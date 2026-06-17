@@ -46,8 +46,12 @@ function renderInline(tokens: Token[] | undefined): string {
         }
         case 'br':
           return '<br />'
+        case 'html':
+        case 'escape':
+          return escapeHtml((token as any).text || (token as any).raw || '')
         default:
-          return ''
+          // Fallback: render text content for any unknown inline token type
+          return escapeHtml((token as any).text || (token as any).raw || '')
       }
     })
     .join('')
@@ -123,7 +127,7 @@ defineExpose({ headings })
       <!-- ── Blockquote ── -->
       <blockquote v-else-if="token.type === 'blockquote'">
         <template v-for="(bt, bj) in token.tokens" :key="bj">
-          <p v-if="bt.type === 'paragraph'" v-html="renderInline(bt.tokens)" />
+          <p v-if="bt.type === 'paragraph' || bt.type === 'text'" v-html="renderInline(bt.tokens)" />
           <h2 v-else-if="bt.type === 'heading' && bt.depth === 2" v-html="renderInline(bt.tokens)" />
           <h3 v-else-if="bt.type === 'heading' && bt.depth === 3" v-html="renderInline(bt.tokens)" />
         </template>
@@ -133,18 +137,18 @@ defineExpose({ headings })
       <ul v-else-if="token.type === 'list' && !token.ordered">
         <li v-for="(item, li) in token.items" :key="li">
           <template v-for="(it, ik) in item.tokens" :key="ik">
-            <p v-if="it.type === 'paragraph'" v-html="renderInline(it.tokens)" />
+            <p v-if="it.type === 'paragraph' || it.type === 'text'" v-html="renderInline(it.tokens)" />
             <ul v-else-if="it.type === 'list' && !it.ordered">
               <li v-for="(sub, sl) in it.items" :key="sl">
                 <template v-for="(subToken, sk) in sub.tokens" :key="sk">
-                  <p v-if="subToken.type === 'paragraph'" v-html="renderInline(subToken.tokens)" />
+                  <p v-if="subToken.type === 'paragraph' || subToken.type === 'text'" v-html="renderInline(subToken.tokens)" />
                 </template>
               </li>
             </ul>
             <ol v-else-if="it.type === 'list' && it.ordered">
               <li v-for="(sub, sl) in it.items" :key="sl">
                 <template v-for="(subToken, sk) in sub.tokens" :key="sk">
-                  <p v-if="subToken.type === 'paragraph'" v-html="renderInline(subToken.tokens)" />
+                  <p v-if="subToken.type === 'paragraph' || subToken.type === 'text'" v-html="renderInline(subToken.tokens)" />
                 </template>
               </li>
             </ol>
@@ -155,7 +159,7 @@ defineExpose({ headings })
       <ol v-else-if="token.type === 'list' && token.ordered">
         <li v-for="(item, li) in token.items" :key="li">
           <template v-for="(it, ik) in item.tokens" :key="ik">
-            <p v-if="it.type === 'paragraph'" v-html="renderInline(it.tokens)" />
+            <p v-if="it.type === 'paragraph' || it.type === 'text'" v-html="renderInline(it.tokens)" />
           </template>
         </li>
       </ol>
