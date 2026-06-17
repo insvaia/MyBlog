@@ -44,7 +44,7 @@ function submit() {
     nickname.value = ''
     content.value = ''
     submitting.value = false
-    message.success('留言成功 ✨')
+    message.success('留言成功')
   }, 500)
 }
 
@@ -70,7 +70,7 @@ function deleteMessage(index: number) {
     <!-- Form card -->
     <div class="form-card">
       <div class="form-header">
-        <span class="form-icon">💬</span>
+        <svg class="form-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         <span>写下你的留言</span>
       </div>
 
@@ -111,7 +111,9 @@ function deleteMessage(index: number) {
           class="submit-btn"
         >
           <template #default>
-            <span v-if="!submitting">📨 提交留言</span>
+            <span v-if="!submitting">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -4px; margin-right: 5px;"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>提交留言
+            </span>
           </template>
         </n-button>
       </div>
@@ -145,7 +147,7 @@ function deleteMessage(index: number) {
 
     <!-- Empty state -->
     <div v-else class="empty-state">
-      <div class="empty-icon">📝</div>
+      <svg class="empty-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
       <p class="empty-text">还没有留言，来做第一个留言的人吧！</p>
     </div>
   </div>
@@ -178,7 +180,7 @@ function deleteMessage(index: number) {
   border-radius: 14px;
   background: #fff;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 12px rgba(55, 60, 70, 0.05);
 }
 
 .form-header {
@@ -194,7 +196,9 @@ function deleteMessage(index: number) {
 }
 
 .form-icon {
-  font-size: 1.1em;
+  display: block;
+  opacity: 0.5;
+  flex-shrink: 0;
 }
 
 .form-body {
@@ -240,6 +244,11 @@ function deleteMessage(index: number) {
   font-weight: 600;
   letter-spacing: 0.01em;
   border-radius: 23px;
+  transition: transform 0.15s ease;
+
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 // ── Section header ──
@@ -340,6 +349,10 @@ function deleteMessage(index: number) {
     color: #e05a5a;
     background: #fef0f0;
   }
+
+  &:active {
+    transform: scale(0.9);
+  }
 }
 
 .msg-content {
@@ -358,9 +371,10 @@ function deleteMessage(index: number) {
 }
 
 .empty-icon {
-  font-size: 3em;
-  margin-bottom: 12px;
-  opacity: 0.6;
+  display: block;
+  margin: 0 auto 12px;
+  opacity: 0.35;
+  color: #999;
 }
 
 .empty-text {

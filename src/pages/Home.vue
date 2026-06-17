@@ -37,7 +37,7 @@ function formatDate(dateStr: string): string {
         round
       >
         <template #prefix>
-          <span class="search-icon">🔍</span>
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         </template>
       </n-input>
     </div>
@@ -84,8 +84,8 @@ function formatDate(dateStr: string): string {
 }
 
 .search-icon {
-  font-size: 14px;
-  opacity: 0.4;
+  display: block;
+  opacity: 0.35;
 }
 
 .post-list {
@@ -113,6 +113,16 @@ function formatDate(dateStr: string): string {
     .post-title {
       color: #000;
     }
+  }
+
+  &:active {
+    transform: scale(0.995);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(44, 95, 110, 0.4);
+    outline-offset: 2px;
+    border-radius: 4px;
   }
 }
 

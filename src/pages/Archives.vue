@@ -100,6 +100,16 @@ function formatDate(dateStr: string): string {
   &:hover {
     color: #1a1a1a;
   }
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(44, 95, 110, 0.4);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
 }
 
 .empty-state {

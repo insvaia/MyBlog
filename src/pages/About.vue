@@ -18,7 +18,7 @@
       </ul>
 
       <h3>联系</h3>
-      <p>GitHub: <a href="https://github.com" target="_blank">@username</a></p>
+      <p>GitHub: <a href="https://github.com" target="_blank">@fishinadream</a></p>
     </div>
   </div>
 </template>

@@ -83,6 +83,9 @@ function handleMenuClick(key: string) {
 </script>
 
 <template>
+  <!-- Skip to content — accessibility -->
+  <a href="#main-content" class="skip-link">跳到主要内容</a>
+
   <n-layout has-sider class="app-layout">
     <!-- Left sidebar -->
     <n-layout-sider
@@ -120,7 +123,7 @@ function handleMenuClick(key: string) {
     </n-layout-sider>
 
     <!-- Right content -->
-    <n-layout-content class="content">
+    <n-layout-content id="main-content" class="content">
       <router-view v-slot="{ Component }">
         <transition name="page" mode="out-in">
           <component :is="Component" />
@@ -146,7 +149,7 @@ function handleMenuClick(key: string) {
         class="change-avatar-btn"
         @click="triggerFileSelect"
       >
-        📷 更换头像
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -4px; margin-right: 5px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/></svg>更换头像
       </n-button>
     </div>
   </n-modal>
@@ -163,9 +166,12 @@ function handleMenuClick(key: string) {
 
 <style scoped lang="scss">
 .app-layout {
-  height: 100vh;
+  min-height: 100dvh;
   background-color: #FAFAFC;
-  background-image: radial-gradient(circle at 10% 20%, rgba(53, 117, 255, 0.15) 0%, rgba(207, 107, 251, 0.10) 30%, transparent 70%);
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(120, 120, 130, 0.06) 0%, transparent 55%),
+    radial-gradient(circle at 85% 75%, rgba(100, 100, 110, 0.04) 0%, transparent 50%);
+  background-attachment: fixed;
 }
 
 // Punch through Naive UI's internal opaque layers in content area
@@ -186,7 +192,7 @@ function handleMenuClick(key: string) {
 .sidebar {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  min-height: 100dvh;
   background: rgba(255, 255, 255, 0.6);
 }
 
@@ -213,7 +219,7 @@ function handleMenuClick(key: string) {
     transform: translate(-50%, -50%);
     width: 150%;
     height: 150%;
-    background: radial-gradient(circle, rgba(144, 238, 200, 0.22) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(160, 170, 180, 0.18) 0%, transparent 70%);
     z-index: 0;
   }
 }
@@ -226,7 +232,7 @@ function handleMenuClick(key: string) {
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.8);
   box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.05),
+    0 8px 20px rgba(55, 60, 70, 0.06),
     0 0 0 1px rgba(255, 255, 255, 0.5) inset;
   overflow: hidden;
   margin: 0 auto;
@@ -241,7 +247,11 @@ function handleMenuClick(key: string) {
 
   &:hover {
     transform: scale(1.05);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 12px 24px rgba(55, 60, 70, 0.12);
+  }
+
+  &:active {
+    transform: scale(0.98);
   }
 }
 
@@ -279,7 +289,7 @@ function handleMenuClick(key: string) {
 }
 
 .content {
-  height: 100vh;
+  min-height: 100dvh;
   overflow-y: auto;
   background: transparent;
 }
@@ -300,7 +310,7 @@ function handleMenuClick(key: string) {
   overflow: hidden;
   border: 3px solid rgba(255, 255, 255, 0.9);
   box-shadow:
-    0 12px 36px rgba(0, 0, 0, 0.1),
+    0 12px 36px rgba(55, 60, 70, 0.1),
     0 0 0 2px rgba(255, 255, 255, 0.5) inset;
 
   img {
@@ -319,6 +329,26 @@ function handleMenuClick(key: string) {
 </style>
 
 <style lang="scss">
+// Skip to content — hidden until focused
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 16px;
+  z-index: 1000;
+  padding: 10px 20px;
+  background: #1a1a1a;
+  color: #f5f5f5;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 500;
+  text-decoration: none;
+  transition: top 0.2s;
+
+  &:focus {
+    top: 16px;
+  }
+}
+
 // Page transition
 .page-enter-active,
 .page-leave-active {

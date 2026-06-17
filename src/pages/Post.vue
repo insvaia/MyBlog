@@ -189,7 +189,7 @@ watch(slug, () => nextTick(setupObserver))
   width: 220px;
   flex-shrink: 0;
   align-self: flex-start;
-  max-height: calc(100vh - 80px);
+  max-height: calc(100dvh - 80px);
   overflow-y: auto;
 
   @media (max-width: 1024px) {
@@ -226,6 +226,16 @@ watch(slug, () => nextTick(setupObserver))
 
   &:hover {
     color: #333;
+  }
+
+  &:active {
+    opacity: 0.7;
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(44, 95, 110, 0.4);
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 
   &.active {

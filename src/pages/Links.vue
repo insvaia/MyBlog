@@ -66,6 +66,15 @@ const links: FriendLink[] = [
     border-color: #ccc;
     background: #fafafa;
   }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid rgba(44, 95, 110, 0.4);
+    outline-offset: 2px;
+  }
 }
 
 .link-name {
