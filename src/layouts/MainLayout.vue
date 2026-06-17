@@ -1,83 +1,86 @@
 <script setup lang="ts">
-import type { MenuOption } from 'naive-ui'
-import { getAllTags } from '@/utils/posts'
-import { useAvatarStore } from '@/stores/avatar'
+import type { MenuOption } from "naive-ui";
+import { getAllTags } from "@/utils/posts";
+import { useAvatarStore } from "@/stores/avatar";
 
-const router = useRouter()
-const route = useRoute()
-const avatarStore = useAvatarStore()
-const { avatarSrc } = storeToRefs(avatarStore)
+const router = useRouter();
+const route = useRoute();
+const avatarStore = useAvatarStore();
+const { avatarSrc } = storeToRefs(avatarStore);
 
-const showAvatarModal = ref(false)
-const fileInputRef = ref<HTMLInputElement | null>(null)
+const showAvatarModal = ref(false);
+const fileInputRef = ref<HTMLInputElement | null>(null);
 
 function openAvatarPreview() {
-  showAvatarModal.value = true
+  showAvatarModal.value = true;
 }
 
 function triggerFileSelect() {
-  fileInputRef.value?.click()
+  fileInputRef.value?.click();
 }
 
 function handleFileChange(e: Event) {
-  const input = e.target as HTMLInputElement
-  const file = input.files?.[0]
-  if (!file) return
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
 
-  const reader = new FileReader()
+  const reader = new FileReader();
   reader.onload = () => {
-    avatarStore.setAvatar(reader.result as string)
-  }
-  reader.readAsDataURL(file)
+    avatarStore.setAvatar(reader.result as string);
+  };
+  reader.readAsDataURL(file);
   // Reset so the same file can be selected again
-  input.value = ''
+  input.value = "";
 }
 
 onMounted(() => {
-  avatarStore.loadAvatar()
-})
+  avatarStore.loadAvatar();
+});
 
-const tags = getAllTags()
+const tags = getAllTags();
 
 const menuOptions: MenuOption[] = [
-  { label: '首页', key: 'home' },
-  { label: '归档', key: 'archives' },
+  { label: "首页", key: "home" },
+  { label: "归档", key: "archives" },
   {
-    label: '标签',
-    key: 'tags',
+    label: "标签",
+    key: "tags",
     children: tags.map((tag) => ({ label: tag, key: `tag-${tag}` })),
   },
-  { label: '友链', key: 'links' },
-  { label: '留言', key: 'guestbook' },
-  { label: '关于', key: 'about' },
-]
+  { label: "友链", key: "links" },
+  { label: "留言", key: "guestbook" },
+  { label: "关于", key: "about" },
+  { label: "ai助理", key: "ai" },
+];
 
 const activeKey = computed(() => {
-  if (route.path === '/') return 'home'
-  if (route.path === '/archives') return 'archives'
-  if (route.path === '/links') return 'links'
-  if (route.path === '/guestbook') return 'guestbook'
-  if (route.path === '/about') return 'about'
-  if (route.path === '/tags') return 'tags'
-  if (route.path.startsWith('/tag/')) return `tag-${route.params.tag}`
-  return null
-})
+  if (route.path === "/") return "home";
+  if (route.path === "/archives") return "archives";
+  if (route.path === "/links") return "links";
+  if (route.path === "/guestbook") return "guestbook";
+  if (route.path === "/about") return "about";
+  if (route.path === "/tags") return "tags";
+  if (route.path === "/ai") return "ai";
+  if (route.path.startsWith("/tag/")) return `tag-${route.params.tag}`;
+  return null;
+});
 
 const menuRouteMap: Record<string, string> = {
-  home: '/',
-  archives: '/archives',
-  tags: '/tags',
-  links: '/links',
-  guestbook: '/guestbook',
-  about: '/about',
-}
+  home: "/",
+  archives: "/archives",
+  tags: "/tags",
+  links: "/links",
+  guestbook: "/guestbook",
+  about: "/about",
+  ai: "/ai",
+};
 
 function handleMenuClick(key: string) {
   if (menuRouteMap[key]) {
-    router.push(menuRouteMap[key])
-  } else if (key.startsWith('tag-')) {
-    const tag = key.replace('tag-', '')
-    router.push(`/tag/${tag}`)
+    router.push(menuRouteMap[key]);
+  } else if (key.startsWith("tag-")) {
+    const tag = key.replace("tag-", "");
+    router.push(`/tag/${tag}`);
   }
 }
 </script>
@@ -98,11 +101,7 @@ function handleMenuClick(key: string) {
       <div class="sidebar-header">
         <div class="avatar-container" @click="openAvatarPreview">
           <div class="avatar-wrap">
-            <img
-              class="avatar"
-              :src="avatarSrc"
-              alt="avatar"
-            />
+            <img class="avatar" :src="avatarSrc" alt="avatar" />
           </div>
         </div>
         <router-link to="/" class="blog-name">一只做梦的鱼</router-link>
@@ -149,7 +148,22 @@ function handleMenuClick(key: string) {
         class="change-avatar-btn"
         @click="triggerFileSelect"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -4px; margin-right: 5px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"/><circle cx="12" cy="13" r="4"/></svg>更换头像
+        <svg
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          style="vertical-align: -4px; margin-right: 5px"
+        >
+          <path
+            d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"
+          />
+          <circle cx="12" cy="13" r="4" /></svg
+        >更换头像
       </n-button>
     </div>
   </n-modal>
@@ -167,10 +181,18 @@ function handleMenuClick(key: string) {
 <style scoped lang="scss">
 .app-layout {
   height: 100dvh;
-  background-color: #FAFAFC;
+  background-color: #fafafc;
   background-image:
-    radial-gradient(circle at 15% 15%, rgba(120, 120, 130, 0.06) 0%, transparent 55%),
-    radial-gradient(circle at 85% 75%, rgba(100, 100, 110, 0.04) 0%, transparent 50%);
+    radial-gradient(
+      circle at 15% 15%,
+      rgba(120, 120, 130, 0.06) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 85% 75%,
+      rgba(100, 100, 110, 0.04) 0%,
+      transparent 50%
+    );
   background-attachment: fixed;
 }
 
@@ -213,14 +235,18 @@ function handleMenuClick(key: string) {
 
   // Glow halo behind avatar
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 150%;
     height: 150%;
-    background: radial-gradient(circle, rgba(160, 170, 180, 0.18) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(160, 170, 180, 0.18) 0%,
+      transparent 70%
+    );
     z-index: 0;
   }
 }
@@ -244,7 +270,9 @@ function handleMenuClick(key: string) {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+  transition:
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease;
 
   &:hover {
     transform: scale(1.05);
@@ -353,7 +381,9 @@ function handleMenuClick(key: string) {
 // Page transition
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .page-enter-from {
