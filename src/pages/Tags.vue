@@ -1,28 +1,28 @@
 <script setup lang="ts">
-import { getAllTags, getAllPosts } from '@/utils/posts'
+import { getAllTags, getAllPosts } from "@/utils/posts";
 
-const router = useRouter()
-const tags = getAllTags()
-const posts = getAllPosts()
+const router = useRouter();
+const tags = getAllTags();
+const posts = getAllPosts();
 
 const tagCounts = computed(() => {
-  const counts: Record<string, number> = {}
+  const counts: Record<string, number> = {};
   for (const post of posts) {
     for (const tag of post.tags) {
-      counts[tag] = (counts[tag] || 0) + 1
+      counts[tag] = (counts[tag] || 0) + 1;
     }
   }
-  return tags.map((tag) => ({ name: tag, count: counts[tag] ?? 0 }))
-})
+  return tags.map((tag) => ({ name: tag, count: counts[tag] ?? 0 }));
+});
 
 function goTag(tag: string) {
-  router.push(`/tag/${tag}`)
+  router.push(`/tag/${tag}`);
 }
 </script>
 
 <template>
   <div class="tags-page">
-    <h2 class="page-title">标签</h2>
+    <h2 class="page-title">我的文章</h2>
     <div class="tag-grid">
       <div
         v-for="item in tagCounts"
