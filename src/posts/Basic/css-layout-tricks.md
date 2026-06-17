@@ -1,7 +1,7 @@
 ---
 title: CSS 布局技巧：Flex 与 Grid 实战
 date: 2026-06-13
-tags: [CSS, 前端]
+tags: [Basic]
 summary: 梳理 Flexbox 和 Grid 的核心用法与常见布局模式。
 ---
 

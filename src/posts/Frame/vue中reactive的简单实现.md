@@ -1,7 +1,7 @@
 ---
 title: Vue中reactive的简单实现
 date: 2026-06-15
-tags: [Vue, JavaScript, 前端]
+tags: [Frame]
 summary: 深入理解Vue响应式原理，手写reactive、依赖收集track与触发更新trigger的实现。
 ---
 

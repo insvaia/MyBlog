@@ -1,7 +1,7 @@
 ---
 title: Vue 3 Composition API 实践指南
 date: 2026-06-14
-tags: [Vue, TypeScript, 前端]
+tags: [Frame]
 summary: 深入理解 Composition API 的设计思想与实战技巧。
 ---
 

@@ -13,7 +13,7 @@ export interface Post extends PostMeta {
 }
 
 // Load all posts
-const postModules = import.meta.glob<string>('@/posts/*.md', {
+const postModules = import.meta.glob<string>('@/posts/**/*.md', {
   query: '?raw',
   import: 'default',
   eager: true,

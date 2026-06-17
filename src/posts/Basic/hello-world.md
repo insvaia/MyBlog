@@ -1,7 +1,7 @@
 ---
 title: Hello World — 我的第一篇博客
 date: 2026-06-10
-tags: [生活, 前端]
+tags: [Basic]
 summary: 这是博客的第一篇文章，记录搭建过程与所思所想。
 ---
 

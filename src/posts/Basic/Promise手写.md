@@ -1,7 +1,7 @@
 ---
 title: Promise手写 — 手写Promise A+规范
 date: 2026-06-15
-tags: [JavaScript, Promise, 前端]
+tags: [Basic]
 summary: 从零手写 Promise A+ 规范，涵盖状态管理、then/catch/finally、静态方法 all/allSettled/race 的完整实现。
 ---
 
