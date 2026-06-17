@@ -166,7 +166,7 @@ function handleMenuClick(key: string) {
 
 <style scoped lang="scss">
 .app-layout {
-  min-height: 100dvh;
+  height: 100dvh;
   background-color: #FAFAFC;
   background-image:
     radial-gradient(circle at 15% 15%, rgba(120, 120, 130, 0.06) 0%, transparent 55%),
@@ -192,7 +192,8 @@ function handleMenuClick(key: string) {
 .sidebar {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  height: 100dvh;
+  overflow-y: auto;
   background: rgba(255, 255, 255, 0.6);
 }
 
@@ -289,7 +290,7 @@ function handleMenuClick(key: string) {
 }
 
 .content {
-  min-height: 100dvh;
+  height: 100dvh;
   overflow-y: auto;
   background: transparent;
 }
