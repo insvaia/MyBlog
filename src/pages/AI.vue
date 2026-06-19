@@ -191,23 +191,7 @@ function handleKeydown(e: KeyboardEvent) {
               <div class="ai-avatar-glow"></div>
               <div class="ai-avatar-ring">
                 <div class="ai-avatar-inner">
-                  <svg
-                    class="ai-icon"
-                    viewBox="0 0 28 28"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <circle cx="12" cy="12" r="3.5" />
-                    <path d="M8.5 12a3.5 3.5 0 0 1 7 0" opacity="0.5" />
-                    <circle cx="16" cy="16" r="1.5" />
-                    <path d="M7 18a5 5 0 0 1 10 0" opacity="0.5" />
-                    <path d="M4 9a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4V9z" opacity="0.3" />
-                    <circle cx="19" cy="9" r="0.8" fill="currentColor" stroke="none" opacity="0.6" />
-                    <circle cx="22" cy="12" r="0.6" fill="currentColor" stroke="none" opacity="0.4" />
-                  </svg>
+                  <img class="ai-icon-img" src="/imgs/deepseek.jpg" alt="DeepSeek" />
                 </div>
               </div>
             </div>
@@ -365,9 +349,11 @@ $accent-warm: rgba(200, 180, 160, 0.5);
   box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.08);
 }
 
-.ai-icon {
-  width: 32px;
-  height: 32px;
+.ai-icon-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 // Identity typography
@@ -824,11 +810,6 @@ $accent-warm: rgba(200, 180, 160, 0.5);
   .ai-avatar-ring {
     width: 64px;
     height: 64px;
-  }
-
-  .ai-icon {
-    width: 24px;
-    height: 24px;
   }
 
   .ai-suggestions {
