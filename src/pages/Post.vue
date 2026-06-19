@@ -191,6 +191,28 @@ watch(slug, () => nextTick(setupObserver))
   align-self: flex-start;
   max-height: calc(100dvh - 80px);
   overflow-y: auto;
+  overflow-x: hidden;
+
+  // Thin custom scrollbar
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.12) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 2px;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.22);
+    }
+  }
 
   @media (max-width: 1024px) {
     display: none;
@@ -199,8 +221,8 @@ watch(slug, () => nextTick(setupObserver))
 
 .toc-title {
   font-size: 0.88em;
-  font-weight: 600;
-  color: #bbb;
+  font-weight: 700;
+  color: #666;
   margin: 0 0 12px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
