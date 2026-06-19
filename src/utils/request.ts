@@ -15,7 +15,8 @@ export async function fetchStream(
   // 中止的请求控制器
   const controller: AbortController = new AbortController();
   // 发起一个请求
-  const response: Response = await fetch(`http://.../${url}`, {
+  const BASE_URL = 'http://localhost:3001'
+  const response: Response = await fetch(`${BASE_URL}${url}`, {
     method: "POST",
     headers: {
       "content-Type": "application/json",
@@ -37,7 +38,7 @@ export async function fetchStream(
     if (done) break;
     const chunk: string = decoder.decode(value, { stream: true });
     const lines: string[] = chunk
-      .split("/n")
+      .split('\n')
       .filter((line: string) => line.trim());
     for (const line of lines) {
       if (line.startsWith("data: ")) {

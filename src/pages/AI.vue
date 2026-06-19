@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted } from 'vue'
 import { marked } from 'marked'
+import { fetchStream } from '../utils/request'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -63,17 +64,42 @@ async function sendMessage(text?: string) {
   nextTick(autoResize)
   scrollToBottom()
 
-  // TODO: replace with actual AI API call via utils/request.ts
   isTyping.value = true
-  await new Promise((r) => setTimeout(r, 1500))
-  messages.value.push({
+
+  // 构建对话历史（排除当前空的 assistant 占位消息）
+  const history = messages.value
+    .filter((m) => m.content)
+    .map((m) => ({ role: m.role, content: m.content }))
+
+  // 创建空的 assistant 消息，流式填充
+  const assistantMsg: ChatMessage = {
     role: 'assistant',
-    content:
-      '感谢你的提问！AI 接口正在接入中，目前我还不能给出实时回答。\n\n请稍后再来尝试，届时我可以帮你：\n- 🔍 **搜索文章** — 快速找到你想要的博文\n- 💡 **技术问答** — 回答前端、Vue、TypeScript 相关问题\n- 📝 **代码示例** — 提供可运行的代码片段',
+    content: '',
     time: formatTime(new Date()),
-  })
-  isTyping.value = false
+  }
+  messages.value.push(assistantMsg)
   scrollToBottom()
+
+  await fetchStream(
+    '/api/ai/chat',
+    { messages: [...history, { role: 'user', content }] },
+    // 每收到一个 token，追加到消息内容
+    (chunk) => {
+      assistantMsg.content += chunk
+      scrollToBottom()
+    },
+    // 流结束
+    () => {
+      isTyping.value = false
+      scrollToBottom()
+    },
+    // 出错
+    (error) => {
+      assistantMsg.content = `❌ 出错了：${error}`
+      isTyping.value = false
+      scrollToBottom()
+    },
+  )
 }
 
 function handleKeydown(e: KeyboardEvent) {
