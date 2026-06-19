@@ -50,7 +50,7 @@ const menuOptions: MenuOption[] = [
   { label: "友链", key: "links" },
   { label: "留言", key: "guestbook" },
   { label: "关于", key: "about" },
-  { label: "ai助理", key: "ai" },
+  { label: "AI助理", key: "ai" },
 ];
 
 const activeKey = computed(() => {

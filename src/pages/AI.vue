@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted } from 'vue'
 import { marked } from 'marked'
-import { fetchStream } from '../utils/request'
+import { useTypewriter } from '../composables/useTypewriter'
 
 interface ChatMessage {
   role: 'user' | 'assistant'
@@ -11,7 +11,7 @@ interface ChatMessage {
 
 const messages = ref<ChatMessage[]>([])
 const inputText = ref('')
-const isTyping = ref(false)
+const { isTyping, streamMessage } = useTypewriter()
 const chatContainerRef = ref<HTMLElement | null>(null)
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
@@ -64,40 +64,31 @@ async function sendMessage(text?: string) {
   nextTick(autoResize)
   scrollToBottom()
 
-  isTyping.value = true
-
-  // 构建对话历史（排除当前空的 assistant 占位消息）
+  // 构建对话历史
   const history = messages.value
     .filter((m) => m.content)
     .map((m) => ({ role: m.role, content: m.content }))
 
-  // 创建空的 assistant 消息，流式填充
-  const assistantMsg: ChatMessage = {
+  // 创建空的 assistant 消息（推入响应式数组后会变 Proxy）
+  messages.value.push({
     role: 'assistant',
     content: '',
     time: formatTime(new Date()),
-  }
-  messages.value.push(assistantMsg)
+  })
+  const msgIdx = messages.value.length - 1
   scrollToBottom()
 
-  await fetchStream(
-    '/api/ai/chat',
-    { messages: [...history, { role: 'user', content }] },
-    // 每收到一个 token，追加到消息内容
-    (chunk) => {
-      assistantMsg.content += chunk
+  // 调用 composable：自动处理流式请求 + 打字机效果
+  streamMessage(
+    [...history, { role: 'user', content }],
+    (char) => {
+      // 必须走 messages.value[i] 才能触发 Vue 响应式更新
+      messages.value[msgIdx]!.content += char
       scrollToBottom()
     },
-    // 流结束
-    () => {
-      isTyping.value = false
-      scrollToBottom()
-    },
-    // 出错
+    () => scrollToBottom(),
     (error) => {
-      assistantMsg.content = `❌ 出错了：${error}`
-      isTyping.value = false
-      scrollToBottom()
+      messages.value[msgIdx]!.content = `❌ 出错了：${error}`
     },
   )
 }

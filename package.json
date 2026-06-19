@@ -11,6 +11,7 @@
     "type-check": "vue-tsc --build"
   },
   "dependencies": {
+    "@fontsource/outfit": "^5.2.8",
     "highlight.js": "^11.11.1",
     "marked": "^18.0.5",
     "marked-highlight": "^2.2.4",
