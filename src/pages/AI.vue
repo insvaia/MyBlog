@@ -3,6 +3,8 @@ import { ref, nextTick, onMounted } from 'vue'
 import { marked } from 'marked'
 import { useTypewriter } from '../composables/useTypewriter'
 
+const baseUrl = import.meta.env.BASE_URL
+
 interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
@@ -191,7 +193,7 @@ function handleKeydown(e: KeyboardEvent) {
               <div class="ai-avatar-glow"></div>
               <div class="ai-avatar-ring">
                 <div class="ai-avatar-inner">
-                  <img class="ai-icon-img" src="/imgs/deepseek.jpg" alt="DeepSeek" />
+                  <img class="ai-icon-img" :src="`${baseUrl}imgs/deepseek.jpg`" alt="DeepSeek" />
                 </div>
               </div>
             </div>

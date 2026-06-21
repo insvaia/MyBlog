@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-const DEFAULT_AVATAR = '/imgs/shantian.jpg'
+const DEFAULT_AVATAR = import.meta.env.BASE_URL + 'imgs/shantian.jpg'
 
 export const useAvatarStore = defineStore('avatar', () => {
   const avatarSrc = ref(DEFAULT_AVATAR)
