@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="none">
+  <defs>
+    <linearGradient id="gBody" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#42b883"/>
+      <stop offset="100%" stop-color="#35495e"/>
+    </linearGradient>
+    <linearGradient id="gFin" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#42b883"/>
+      <stop offset="100%" stop-color="#2c7f5e"/>
+    </linearGradient>
+    <linearGradient id="gBubble" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#42b88380"/>
+      <stop offset="100%" stop-color="#42b88330"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 尾鳍 - 三角形组成的尾部 -->
+  <polygon points="64,128 12,56 28,128 12,200" fill="url(#gFin)" opacity="0.9"/>
+
+  <!-- 身体上半 - 类似 Vue 的双层三角形设计 -->
+  <polygon points="76,56 192,72 196,128 76,128" fill="url(#gBody)" opacity="0.85"/>
+
+  <!-- 身体下半 -->
+  <polygon points="76,200 192,184 196,128 76,128" fill="url(#gBody)"/>
+
+  <!-- 背鳍 -->
+  <polygon points="120,72 150,20 168,72" fill="url(#gBody)" opacity="0.7"/>
+
+  <!-- 眼睛 -->
+  <circle cx="186" cy="108" r="8" fill="#fff"/>
+  <circle cx="189" cy="107" r="4" fill="#35495e"/>
+
+  <!-- 气泡 - 做梦元素 -->
+  <circle cx="214" cy="64" r="7" stroke="#42b883" stroke-width="2" fill="none" opacity="0.5"/>
+  <circle cx="232" cy="44" r="5" stroke="#42b883" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <circle cx="242" cy="28" r="3" stroke="#42b883" stroke-width="1.2" fill="none" opacity="0.25"/>
+</svg>
