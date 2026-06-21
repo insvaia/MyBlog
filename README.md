@@ -2,6 +2,8 @@
 
 个人技术博客，基于 **Vue 3 + TypeScript + Vite** 构建，搭配 **Koa + DeepSeek** 后端实现 AI 智能问答。所有文章以 Markdown 格式编写，支持代码高亮、全文搜索、标签分类归档，以及流式 AI 对话。
 
+> 🌐 **在线浏览**：[https://insvaia.github.io/MyBlog/](https://insvaia.github.io/MyBlog/)
+
 ## ✨ 功能特性
 
 ### 📝 博客系统
