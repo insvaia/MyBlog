@@ -2,11 +2,14 @@
 import type { MenuOption } from "naive-ui";
 import { getAllTags } from "@/utils/posts";
 import { useAvatarStore } from "@/stores/avatar";
+import { useThemeStore } from "@/stores/theme";
 
 const router = useRouter();
 const route = useRoute();
 const avatarStore = useAvatarStore();
+const themeStore = useThemeStore();
 const { avatarSrc } = storeToRefs(avatarStore);
+const { isDark } = storeToRefs(themeStore);
 
 const showAvatarModal = ref(false);
 const fileInputRef = ref<HTMLInputElement | null>(null);
@@ -117,6 +120,13 @@ function handleMenuClick(key: string) {
       />
 
       <div class="sidebar-footer">
+        <button class="theme-toggle" @click="themeStore.toggle()" :title="isDark ? '切换浅色模式' : '切换深色模式'">
+          <!-- Sun icon (shown in dark mode) -->
+          <svg v-if="isDark" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <!-- Moon icon (shown in light mode) -->
+          <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <span class="toggle-label">{{ isDark ? '浅色' : '深色' }}</span>
+        </button>
         <span class="footer-text">Powered by Vue 3</span>
       </div>
     </n-layout-sider>
@@ -310,6 +320,45 @@ function handleMenuClick(key: string) {
 .sidebar-footer {
   padding: 16px 20px;
   border-top: 1px solid #eee;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+// Theme toggle button
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  background: #fafafa;
+  color: #666;
+  cursor: pointer;
+  font-size: 0.78em;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+
+  svg {
+    flex-shrink: 0;
+    display: block;
+  }
+
+  &:hover {
+    border-color: #bbb;
+    color: #333;
+    background: #f0f0f0;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.toggle-label {
+  white-space: nowrap;
 }
 
 .footer-text {
@@ -394,5 +443,47 @@ function handleMenuClick(key: string) {
 .page-leave-to {
   opacity: 0;
   transform: translateY(-8px);
+}
+
+// ═══════════════════════════════════════
+// Dark theme — sidebar overrides
+// ═══════════════════════════════════════
+html.dark {
+  .sidebar {
+    background: rgba(30, 30, 35, 0.8);
+  }
+
+  .app-layout {
+    background-color: #1a1a1f;
+  }
+
+  .blog-name {
+    color: rgba(255, 255, 255, 0.85);
+    &:hover { color: rgba(255, 255, 255, 0.6); }
+  }
+
+  .sidebar-header {
+    border-bottom-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .sidebar-footer {
+    border-top-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .footer-text {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .theme-toggle {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.5);
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      color: rgba(255, 255, 255, 0.75);
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
 }
 </style>
