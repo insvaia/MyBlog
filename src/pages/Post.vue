@@ -66,13 +66,57 @@ function formatDate(dateStr: string): string {
   })
 }
 
-onMounted(() => nextTick(setupObserver))
-onUnmounted(cleanupObserver)
-watch(slug, () => nextTick(setupObserver))
+// ── Reading progress bar ──
+const postPageRef = ref<HTMLElement | null>(null)
+const readingProgress = ref(0)
+let scrollContainer: HTMLElement | null = null
+
+/** 从当前元素向上查找最近的可滚动祖先 */
+function findScrollContainer(el: HTMLElement): HTMLElement | null {
+  let current: HTMLElement | null = el.parentElement
+  while (current) {
+    const style = window.getComputedStyle(current)
+    const overflowY = style.overflowY
+    if (overflowY === 'auto' || overflowY === 'scroll') {
+      return current
+    }
+    current = current.parentElement
+  }
+  return null
+}
+
+function handleScroll() {
+  if (!scrollContainer) return
+  const scrollTop = scrollContainer.scrollTop
+  const docHeight = scrollContainer.scrollHeight - scrollContainer.clientHeight
+  readingProgress.value = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0
+}
+
+onMounted(() => {
+  nextTick(() => {
+    setupObserver()
+    // 自动查找滚动容器（Naive UI 的 n-layout-content 内部可能有额外包裹层）
+    if (postPageRef.value) {
+      scrollContainer = findScrollContainer(postPageRef.value)
+      scrollContainer?.addEventListener('scroll', handleScroll, { passive: true })
+    }
+  })
+})
+onUnmounted(() => {
+  cleanupObserver()
+  scrollContainer?.removeEventListener('scroll', handleScroll)
+})
+watch(slug, () => {
+  readingProgress.value = 0
+  nextTick(setupObserver)
+})
 </script>
 
 <template>
-  <div class="post-page">
+  <div ref="postPageRef" class="post-page">
+    <!-- Reading progress bar -->
+    <div class="reading-progress" :style="{ width: `${readingProgress}%` }" />
+
     <template v-if="post">
       <!-- TOC + Content -->
       <div class="post-body">
@@ -160,6 +204,19 @@ watch(slug, () => nextTick(setupObserver))
 </template>
 
 <style scoped lang="scss">
+// Reading progress bar
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #2c5f6e, #4a90a4);
+  z-index: 100;
+  transition: width 0.15s linear;
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px rgba(44, 95, 110, 0.15);
+}
+
 .post-page {
   padding-bottom: 80px;
 }
