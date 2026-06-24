@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 
 export interface GuestbookMessage {
+  id: string
   nickname: string
   content: string
   time: string
