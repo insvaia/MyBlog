@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getPostBySlug } from '@/utils/posts'
+import { getPostBySlug, getRelatedPosts } from '@/utils/posts'
 import type { Post } from '@/utils/posts'
 import MarkdownRender from '@/components/MarkdownRender.vue'
 import type { TocHeading } from '@/utils/headings'
@@ -13,6 +13,10 @@ const activeId = ref('')
 
 const toc = computed<TocHeading[]>(() => {
   return mdRef.value?.headings ?? []
+})
+
+const relatedPosts = computed<Post[]>(() => {
+  return getRelatedPosts(slug.value, 3)
 })
 
 // ── TOC observer ──
@@ -98,6 +102,33 @@ watch(slug, () => nextTick(setupObserver))
               :content="post.content"
             />
           </main>
+
+          <!-- Related posts -->
+          <section v-if="relatedPosts.length > 0" class="related-section">
+            <h3 class="related-title">相关推荐</h3>
+            <div class="related-grid">
+              <article
+                v-for="rp in relatedPosts"
+                :key="rp.slug"
+                class="related-card"
+              >
+                <router-link :to="`/post/${rp.slug}`" class="related-link">
+                  <h4 class="related-post-title">{{ rp.title }}</h4>
+                  <p class="related-post-summary">{{ rp.summary }}</p>
+                  <div class="related-post-tags">
+                    <n-tag
+                      v-for="tag in rp.tags"
+                      :key="tag"
+                      size="tiny"
+                      :bordered="false"
+                    >
+                      {{ tag }}
+                    </n-tag>
+                  </div>
+                </router-link>
+              </article>
+            </div>
+          </section>
         </div>
 
         <!-- TOC (right side) -->
@@ -265,6 +296,80 @@ watch(slug, () => nextTick(setupObserver))
     font-weight: 500;
     border-left-color: #999;
   }
+}
+
+// Related posts
+.related-section {
+  margin-top: 56px;
+  padding-top: 36px;
+  border-top: 2px solid #f0f0f0;
+}
+
+.related-title {
+  font-size: 1.1em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #1a1a1a;
+  margin: 0 0 20px;
+}
+
+.related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.related-card {
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    border-color: #ddd;
+    box-shadow: 0 2px 12px rgba(55, 60, 70, 0.06);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.related-link {
+  display: block;
+  padding: 18px 20px;
+  text-decoration: none;
+}
+
+.related-post-title {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.related-post-summary {
+  font-size: 0.82em;
+  line-height: 1.55;
+  color: #999;
+  margin: 0 0 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.related-post-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
 .not-found {

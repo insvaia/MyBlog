@@ -59,3 +59,31 @@ export function getAllTags(): string[] {
   }
   return Array.from(tags).sort()
 }
+
+/**
+ * 根据标签重合度推荐相关文章
+ * @param slug - 当前文章 slug
+ * @param limit - 最多返回几篇
+ */
+export function getRelatedPosts(slug: string, limit = 3): Post[] {
+  const current = getPostBySlug(slug)
+  if (!current) return []
+
+  const others = getAllPosts().filter((p) => p.slug !== slug)
+  if (others.length === 0) return []
+
+  const currentTags = new Set(current.tags)
+
+  const scored = others.map((post) => {
+    const overlap = post.tags.filter((t) => currentTags.has(t)).length
+    // 加分项：同标签越多分数越高
+    return { post, score: overlap }
+  })
+
+  // 过滤掉完全没交集的，按分数降序
+  return scored
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map((item) => item.post)
+}
