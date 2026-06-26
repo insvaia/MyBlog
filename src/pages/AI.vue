@@ -84,9 +84,9 @@ async function sendMessage(text?: string) {
   // 调用 composable：自动处理流式请求 + 打字机效果
   streamMessage(
     [...history, { role: 'user', content }],
-    (char) => {
+    (chunk) => {
       // 必须走 messages.value[i] 才能触发 Vue 响应式更新
-      messages.value[msgIdx]!.content += char
+      messages.value[msgIdx]!.content += chunk
       scrollToBottom()
     },
     () => scrollToBottom(),
