@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, nextTick, onMounted } from 'vue'
-import { marked } from 'marked'
+import '@/utils/marked' // ensure marked is configured before use
+import MarkdownRender from '@/components/MarkdownRender.vue'
 import { useTypewriter } from '../composables/useTypewriter'
 
 const baseUrl = import.meta.env.BASE_URL
@@ -119,8 +120,9 @@ function handleKeydown(e: KeyboardEvent) {
                 <div
                   v-if="msg.role === 'assistant'"
                   class="message-content"
-                  v-html="marked.parse(msg.content) as string"
-                ></div>
+                >
+                  <MarkdownRender :content="msg.content" />
+                </div>
                 <!-- User content as plain text -->
                 <p v-else class="message-content message-text">{{ msg.content }}</p>
                 <span class="message-time">{{ msg.time }}</span>
@@ -550,73 +552,114 @@ $accent-warm: rgba(200, 180, 160, 0.5);
     white-space: pre-wrap;
   }
 
-  // Markdown elements — dark theme
-  :deep(p) {
-    margin: 0 0 0.8em;
-    &:last-child { margin-bottom: 0; }
-  }
+  // ── Override post.scss light-theme defaults for dark AI page ──
+  // post.scss sets dark text colors (e.g. #2c2c2c) that are invisible
+  // on the AI page's dark background (#1a1a1f). These :deep() overrides
+  // pierce through MarkdownRender's .post-content wrapper and restore
+  // the dark-theme look.
+  :deep(.post-content) {
+    color: $text-primary;
+    max-width: none;
+    margin: 0;
 
-  :deep(strong) {
-    font-weight: 600;
-    color: #fff;
-  }
-
-  :deep(a) {
-    color: $accent-cool;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(140, 160, 210, 0.3);
-    transition: border-color 0.2s;
-
-    &:hover {
-      border-bottom-color: $accent-cool;
+    h1, h2, h3, h4, h5, h6 {
+      color: #fff;
+      border-bottom-color: rgba(255, 255, 255, 0.08);
     }
-  }
 
-  :deep(code) {
-    font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
-    font-size: 0.85em;
-  }
+    p {
+      margin: 0 0 0.8em;
+      color: $text-primary;
+      &:last-child { margin-bottom: 0; }
+    }
 
-  :deep(:not(pre) > code) {
-    padding: 2px 6px;
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 4px;
-    color: rgba(255, 255, 255, 0.8);
-  }
+    strong {
+      font-weight: 600;
+      color: #fff;
+    }
 
-  :deep(pre) {
-    margin: 0.8em 0;
-    padding: 14px 18px;
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 10px;
-    border: 1px solid $border-subtle;
-    overflow-x: auto;
+    em { color: $text-secondary; }
+
+    a {
+      color: $accent-cool;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(140, 160, 210, 0.3);
+      transition: border-color 0.2s;
+      &:hover { border-bottom-color: $accent-cool; }
+    }
 
     code {
-      background: none;
-      color: #c9d1d9;
-      font-size: 0.82em;
-      line-height: 1.6;
-      padding: 0;
+      font-family: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+      font-size: 0.85em;
     }
-  }
 
-  :deep(ul), :deep(ol) {
-    margin: 0.5em 0;
-    padding-left: 1.4em;
-  }
+    :not(pre) > code {
+      padding: 2px 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      color: rgba(255, 255, 255, 0.8);
+    }
 
-  :deep(li) {
-    margin-bottom: 0.3em;
-  }
+    pre {
+      margin: 0.8em 0;
+      padding: 14px 18px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 10px;
+      border: 1px solid $border-subtle;
+      overflow-x: auto;
+      box-shadow: none;
 
-  :deep(blockquote) {
-    margin: 0.6em 0;
-    padding: 8px 14px;
-    border-left: 3px solid rgba(255, 255, 255, 0.12);
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 0 6px 6px 0;
-    color: $text-secondary;
+      code {
+        background: none;
+        color: #c9d1d9;
+        font-size: 0.82em;
+        line-height: 1.6;
+        padding: 0;
+      }
+    }
+
+    ul, ol {
+      margin: 0.5em 0;
+      padding-left: 1.4em;
+    }
+
+    li { margin-bottom: 0.3em; }
+
+    blockquote {
+      margin: 0.6em 0;
+      padding: 8px 14px;
+      border-left: 3px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.02);
+      color: $text-secondary;
+    }
+
+    table {
+      border-color: rgba(255, 255, 255, 0.06);
+    }
+
+    thead {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    th {
+      color: #fff;
+    }
+
+    th, td {
+      border-bottom-color: rgba(255, 255, 255, 0.06);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    hr {
+      background: linear-gradient(to right, transparent, rgba(255,255,255,0.08) 20%, rgba(255,255,255,0.08) 80%, transparent);
+    }
   }
 }
 

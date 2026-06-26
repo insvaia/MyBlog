@@ -1,23 +1,8 @@
 <script setup lang="ts">
-import { marked } from 'marked'
-import { markedHighlight } from 'marked-highlight'
-import hljs from 'highlight.js'
+import { marked, hljs } from '@/utils/marked'
 import type { Token, Tokens } from 'marked'
 import { headingId, extractTocHeadings } from '@/utils/headings'
 import type { TocHeading } from '@/utils/headings'
-
-// ── Configure marked ──
-marked.use(
-  markedHighlight({
-    langPrefix: 'hljs language-',
-    highlight(code: string, lang: string) {
-      if (lang && hljs.getLanguage(lang)) {
-        return hljs.highlight(code, { language: lang }).value
-      }
-      return hljs.highlightAuto(code).value
-    },
-  }),
-)
 
 // ── Inline token → HTML ──
 function renderInline(tokens: Token[] | undefined): string {
